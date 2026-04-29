@@ -273,8 +273,46 @@ harness_dashboard/                  # 프로젝트 루트 (= 작업 디렉토리
 
 ---
 
+## 알림 발송 규칙
+
+> **채널**: Telegram + Synology Chat 동시 발송 (`scripts/notify_all.py` — 단일 wrapper)
+> **Stop Hook**: `.claude/settings.json` 의 Stop hook 이 세션 종료 시 자동 실행. 별도 등록 불필요.
+
+### 단계 완료 시 알림 발송 의무
+
+각 단계(S*.*)가 완료되면 반드시 아래 순서로 실행한다:
+
+1. `tmp/telegram_pending.txt` 에 알림 내용 기록 (CLAUDE.md §Stop Hook 형식)
+2. `venv/Scripts/python.exe scripts/notify_all.py < /dev/null` 호출해 즉시 발송
+
+```bash
+# Windows (venv 활성화 상태)
+python scripts/notify_all.py < /dev/null
+
+# Bash 에서 직접 실행
+venv/Scripts/python.exe scripts/notify_all.py < /dev/null
+```
+
+### `notify_all.py` 발송 정책
+
+| 상황 | 동작 |
+|---|---|
+| `tmp/telegram_pending.txt` 존재 | 해당 내용 발송 후 파일 삭제 |
+| 파일 없음 | `git diff` 기반 자동 요약 발송 |
+| 환경변수 미설정 채널 | skip (다른 채널은 계속 시도) |
+| 둘 다 실패 | pending 파일 유지 (재시도 가능) |
+
+### 구 hook 파일 (삭제 완료 후 이 항목 제거)
+
+- `.claude/hooks/telegram_notify.py` — `notify_all.py` 통합으로 대체됨. **삭제 대상.**
+- `.claude/hooks/synology_notify.py` — 동일. **삭제 대상.**
+- `.claude/settings.json` 의 Stop hook 은 현재 `scripts/notify_all.py` 만 참조함.
+
+---
+
 ## Change Log
 
 | 버전 | 일자 | 변경 내용 |
 |---|---|---|
 | 1.0 | 2026-04-29 | 최초 작성 — Django 5.x + Tailwind, Redis/Celery 미사용 결정. 외부 프로젝트 폴더 read-only 원칙 명시. |
+| 1.1 | 2026-04-29 | 알림 발송 규칙 추가 — `scripts/notify_all.py` 단일 wrapper 운영 정책, 단계 완료 시 즉시 발송 의무 명시. |
