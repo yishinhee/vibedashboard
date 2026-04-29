@@ -1,0 +1,50 @@
+{
+  "preferences": {
+    "coworkScheduledTasksEnabled": false,
+    "ccdScheduledTasksEnabled": true,
+    "sidebarMode": "chat",
+    "coworkWebSearchEnabled": false
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/sync_structure.py"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/dod_check.py"
+          },
+          {
+            "type": "command",
+            "command": "python .claude/hooks/telegram_notify.py"
+          },
+          {
+            "type": "command",
+            "command": "python .claude/hooks/synology_notify.py"
+          }
+        ]
+      }
+    ]
+  },
+  "mcpServers": {
+    "synology-chat": {
+      "command": "python",
+      "args": ["C:\\Users\\shinh\\.claude\\mcp\\synology-chat-mcp\\server.py"],
+      "env": {
+        "SYNOLOGY_BASE_URL": "https://devmon.synology.me:5001",
+        "SYNOLOGY_BOT_TOKEN": "fyZqslxZZHm277A81XJchBnkafLibVJeV2RoQKJOhg8HwCthrIwO4tTBFdtAFPu1",
+        "SYNOLOGY_BOT_USER_ID": "8"
+      }
+    }
+  }
+}

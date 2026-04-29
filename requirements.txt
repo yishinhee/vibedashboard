@@ -1,0 +1,16 @@
+# ============================================================
+# harness-dashboard 의존성
+# 갱신 방법:
+#   venv 활성 후  pip install -r requirements.txt
+#   의존성 추가 시  pip install <pkg> && pip freeze > requirements.txt
+# 정책: agents.md §Tech Stack — Django 5.x, Redis/Celery 미사용
+# ============================================================
+
+# --- Runtime ---
+Django>=5.2,<5.3
+django-environ>=0.13,<0.14
+
+# --- Django 의존(자동 설치되지만 명시 고정) ---
+asgiref>=3.11,<4.0
+sqlparse>=0.5,<0.6
+tzdata>=2026.1

@@ -1,0 +1,20 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          { "type": "command", "command": "python .claude/hooks/sync_structure.py" }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          { "type": "command", "command": "python .claude/hooks/dod_check.py" },
+          { "type": "command", "command": "python scripts/notify_all.py" }
+        ]
+      }
+    ]
+  }
+}
